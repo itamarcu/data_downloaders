@@ -15,7 +15,7 @@ def main():
         raise TypeError("Arguments: level, [")
     level = int(sys.argv[1])
     all_spells = download_all_spells()
-    random.seed(Date.today())
+    random.seed(Date.today().isoformat())
     print(f"---Drawing random spells for level {level}---")
     sampled_spells = sample_random_spells(
         all_spells,
