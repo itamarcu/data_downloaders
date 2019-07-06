@@ -90,11 +90,18 @@ def sample_random_spells(
 
 
 def spell_to_str(spell: Spell) -> str:
-    components = [c for c in ["s", "v", "m"] if c in spell["components"]]
-    concentration = ["(C)"] if any(x.get("duration", {}).get("concentration") for x in spell["duration"]) else []
+    components = [c for c in ["s", "v"] if c in spell["components"]]
+    if "m" in spell["components"]:
+        m = spell["components"]["m"]
+        if type(m) == str:
+            components.append("m")
+        else:
+            components.append(f'm ({m["text"]})')
+    concentration = ["(C)"] if any(x.get("concentration") for x in spell["duration"]) else []
     ritual = ["(R)"] if spell.get("meta", {}).get("ritual") else []
     extras = ", ".join(concentration + ritual + components)
-    return f'{spell["level"]} | {spell["name"]}    {extras}    '
+    # longest spell is 34 letters but I'll just 26
+    return f'{spell["level"]} | {spell["name"].ljust(26)} {extras}    '
 
 
 def resample_spell(spell: Spell, all_spells: List[Spell]):
