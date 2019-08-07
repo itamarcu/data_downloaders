@@ -12,7 +12,7 @@ Spell = Dict[str, Any]
 
 def main():
     if len(sys.argv) != 2:
-        raise TypeError("Arguments: level, [")
+        raise TypeError("Missing argument: level")
     level = int(sys.argv[1])
     all_spells = download_all_spells()
     random.seed(Date.today().isoformat())
