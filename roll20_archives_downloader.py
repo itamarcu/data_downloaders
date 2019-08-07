@@ -16,6 +16,9 @@ def main():
     print("Printing all text messages...")
     for m in text_messages:
         print(message_to_string(m))
+    # or search the logs for a particular string
+    found_message = search_logs_for_string("backflip", all_chat_messages)
+    print(f'Message found at page {found_message["page_number_in_chat_archives"]}: {message_to_string(found_message)}')
     print("Done.")
 
 
@@ -29,6 +32,7 @@ def download_logs(email, password, chat_archives_number):
         messages = []
         response = s.get(f"https://app.roll20.net/campaigns/chatarchive/{chat_archives_number}/?p={page_number}", allow_redirects=False)
         if response.status_code == 302:
+            assert page_number != 1, "You probably used a wrong login, or a wrong chat archives number"
             break  # reached the end, asked for a nonexistent page, got redirected
         assert "msgdata" in response.text, "You're not a player in that campaign!"
         msgdata_index = response.text.index("msgdata")
@@ -38,6 +42,7 @@ def download_logs(email, password, chat_archives_number):
         json_of_logs = json.loads(decoded_msgdata)
         for x in json_of_logs:
             for k, v in x.items():
+                v["page_number_in_chat_archives"] = page_number
                 messages.append(v)
         all_messages.extend(reversed(messages))
         print(f"Downloaded page {page_number}.")
@@ -56,6 +61,13 @@ def filter_out_rolls(all_messages):
 
 def message_to_string(message):
     return f'{message["who"]}: {message["content"]}'
+
+
+def search_logs_for_string(searched_string, all_messages):
+    for m in all_messages:
+        if searched_string in m["content"]:
+            return m
+    raise Exception(f"No message with {searched_string} found in any of the {len(all_messages)} messages :(")
 
 
 if __name__ == '__main__':
