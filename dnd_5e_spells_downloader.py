@@ -41,7 +41,8 @@ ALLOWED_SOURCES = [
     "Guildmasters' Guide to Ravnica",
     "Sword Coast Adventurer's Guide",
     "Xanathar's Guide to Everything",
-    "UAFighterRogueWizard, UAModernMagic, UASorcererAndWarlock, UAStarterSpells, UAThatOldBlackMagic"
+    "Explorer's Guide to Wildemount",
+    "UA2020PsionicOptionsRevisited", "UASorcererAndWarlock", "UA2020SpellsAndMagicTattoos"
 ]
 
 
@@ -121,7 +122,7 @@ def sample_random_spells(
 
     :param all_spells: list of all spells in the game
     :param ssbsl: dict of spell slots by spell level, like the one returned by spell_slots_by_level()
-    :param allowed_material_costs: filter out all with material cost; can be "all", "none", or "only non-consumable costs"."""
+    :param allowed_material_costs: filter out material cost. can be "all", "none", or "only non-consumable costs"."""
     sampled_spells = []
     for spell_level, count in ssbsl.items():
         eligible_spells = [spell for spell in all_spells if spell["level"] == spell_level]
@@ -175,9 +176,9 @@ def resample_spell(spell: Spell, all_spells: List[Spell]):
 
 def spell_slots_by_level(level: int) -> Dict[int, int]:
     """e.g. for level 8 it will return: {0: 4, 1: 4, 2: 3, 3: 3, 4: 2}.
-    Based on https://rpg.stackexchange.com/questions/144945/what-is-the-formula-behind-each-level-spell-slot-progression-that-i-can-use-in-a"""
+    Based on https://rpg.stackexchange.com/questions/144945"""
     ssbl = defaultdict(lambda: 0)
-    ssbl[0] = 3  # cantrips
+    ssbl[0] = 4  # cantrips; if you want Wizard-like, decrease this to 3
     for lvl in range(1, level + 1):
         if lvl <= 11 or lvl in [13, 15, 17]:
             ssbl[(lvl + 1) // 2] += 1
